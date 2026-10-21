@@ -11,7 +11,7 @@ export function Timeline({ onOpenTrip }: { onOpenTrip: (trip: string) => void })
   return (
     <section id="timeline">
       <div className="wrap">
-        <PageHeader n={4} eyebrow="Chapters in time" title="The" em="Timeline" sub={`${list.length} trips and days out, oldest to newest.`} />
+        <PageHeader n={4} eyebrow="Chapters in time" title="The" em="Timeline" sub="Every trip and day out, oldest to newest." />
         <ol className="tl">
           <li className="ti first">
             <Reveal className="ti-row">

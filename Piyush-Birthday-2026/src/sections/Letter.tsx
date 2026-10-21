@@ -1,28 +1,51 @@
+import { Fragment } from 'react'
 import { letter } from '../data/content'
-import { inCategory, photos } from '../data/gallery'
+import { byId, inCategory, photos, together } from '../data/gallery'
 import { MaskImage } from '../components/MaskImage'
+import { PhotoFrame } from '../components/PhotoFrame'
 import { PageHeader } from '../components/PageHeader'
 import { Reveal } from '../components/Split'
 
-// The letter is set on a sheet of ivory paper, with a drop cap and a gold wax seal.
+// **bold** -> <strong>
+const rich = (t: string) => t.split(/(\*\*[^*]+\*\*)/).map((part, i) =>
+  part.startsWith('**') ? <strong key={i}>{part.slice(2, -2)}</strong> : <Fragment key={i}>{part}</Fragment>)
+
+// The letter sits on ivory paper. Beside it, a column that stays in view while reading:
+// a framed photo, three small memories, and a handwritten note.
 export function Letter() {
-  const p = inCategory('Piyush')[0] ?? photos[photos.length - 1]
-  const [salute, ...body] = letter.paragraphs
-  const signoffLine = body[body.length - 1]
-  const middle = body.slice(0, -1)
+  const main = byId('i73') ?? inCategory('Piyush')[0] ?? photos[photos.length - 1]
+  const minis = ['i22', 'i61', 'i3'].map(byId).filter((p): p is NonNullable<typeof p> => !!p)
+  const strip = minis.length === 3 ? minis : together.filter((p) => p.id !== main?.id).slice(0, 3)
   return (
     <section className="letter" id="letter">
       <div className="wrap">
         <PageHeader n={7} eyebrow="From me to you" title="A" em="letter" sub="Read it slowly." />
         <div className="lt">
-          <div className="lt-photo">
-            <span className="frame-offset" aria-hidden="true" />
-            <MaskImage photo={p} label="Photo" />
-          </div>
+          <aside className="lt-aside">
+            <div className="lt-sticky">
+              <div className="lt-photo">
+                <span className="frame-offset" aria-hidden="true" />
+                <MaskImage photo={main} label="Photo" />
+              </div>
+              <div className="lt-minis">
+                {strip.map((p, i) => (
+                  <div key={p.id} className="lt-mini" style={{ rotate: `${[-3, 2, -1.5][i]}deg` }}>
+                    <PhotoFrame photo={p} thumb natural />
+                  </div>
+                ))}
+              </div>
+              <p className="lt-note">{letter.asideNote}</p>
+              <dl className="lt-facts">
+                <div><dt>Since</dt><dd>5th standard</dd></div>
+                <div><dt>Friends for</dt><dd>10 years</dd></div>
+                <div><dt>Status</dt><dd>Forever</dd></div>
+              </dl>
+            </div>
+          </aside>
           <Reveal className="paper">
-            <p className="salute">{salute}</p>
-            {middle.map((t, i) => <p key={i} className={i === 0 ? 'drop' : ''}>{t}</p>)}
-            <p className="closing">{signoffLine}</p>
+            <p className="salute">{letter.salute}</p>
+            {letter.paragraphs.map((t, i) => <p key={i} className={i === 0 ? 'drop' : ''}>{rich(t)}</p>)}
+            <div className="closing">{letter.closing.map((t, i) => <p key={i}>{rich(t)}</p>)}</div>
             <p className="sig"><span>{letter.signoff}</span>{letter.from}</p>
             <svg className="seal" viewBox="0 0 100 100" aria-hidden="true">
               <defs>

@@ -1,16 +1,23 @@
 import { useEffect, useRef, useState } from 'react'
-import { Volume2, VolumeX, ExternalLink } from 'lucide-react'
+import { Volume2, VolumeX, ExternalLink, Play, Pause, Maximize } from 'lucide-react'
 import { reels } from '../data/content'
 import { url } from '../data/gallery'
 import { audio } from '../hooks/audio'
 
 type Item = (typeof reels.items)[number]
 
-// One reel: plays silently while on screen; tapping turns its sound on and pauses the birthday song,
-// which resumes when the reel is muted again or scrolls away. Credited to its creator.
+const fmt = (t: number) => (isFinite(t) ? `${Math.floor(t / 60)}:${String(Math.floor(t % 60)).padStart(2, '0')}` : '0:00')
+
+// One reel with basic media controls (play/pause, seek, time, sound, full screen).
+// It plays silently while on screen; turning its sound on pauses the birthday song, which resumes afterwards.
 function Reel({ r, active, onSound }: { r: Item; active: boolean; onSound: (on: boolean) => void }) {
   const v = useRef<HTMLVideoElement>(null)
+  const box = useRef<HTMLDivElement>(null)
   const [visible, setVisible] = useState(false)
+  const [playing, setPlaying] = useState(false)
+  const [userPaused, setUserPaused] = useState(false)
+  const [t, setT] = useState(0)
+  const [d, setD] = useState(0)
   useEffect(() => {
     const io = new IntersectionObserver(([e]) => setVisible(e.isIntersecting), { threshold: 0.5 })
     io.observe(v.current!)
@@ -18,19 +25,38 @@ function Reel({ r, active, onSound }: { r: Item; active: boolean; onSound: (on: 
   }, [])
   useEffect(() => {
     const el = v.current!
-    if (visible && !matchMedia('(prefers-reduced-motion: reduce)').matches) el.play().catch(() => {})
+    if (visible && !userPaused && !matchMedia('(prefers-reduced-motion: reduce)').matches) el.play().catch(() => {})
     else if (!visible) { el.pause(); if (active) onSound(false) }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [visible])
-  useEffect(() => { v.current!.muted = !active; if (active) v.current!.play().catch(() => {}) }, [active])
+  useEffect(() => { v.current!.muted = !active; if (active) { setUserPaused(false); v.current!.play().catch(() => {}) } }, [active])
+  const togglePlay = () => {
+    const el = v.current!
+    if (el.paused) { setUserPaused(false); el.play().catch(() => {}) } else { setUserPaused(true); el.pause(); if (active) onSound(false) }
+  }
+  const full = () => {
+    const el = box.current as HTMLDivElement & { webkitRequestFullscreen?: () => void }
+    const vid = v.current as HTMLVideoElement & { webkitEnterFullscreen?: () => void }
+    if (document.fullscreenElement) document.exitFullscreen()
+    else if (el.requestFullscreen) el.requestFullscreen()
+    else if (vid.webkitEnterFullscreen) vid.webkitEnterFullscreen() // iPhone
+  }
   return (
-    <figure className="reel">
-      <div className="reel-frame" style={{ aspectRatio: `${r.w} / ${r.h}` }}>
+    <figure className={`reel ${playing ? "" : "is-paused"}`}>
+      <div ref={box} className="reel-frame" style={{ aspectRatio: `${r.w} / ${r.h}` }}>
         <video ref={v} src={url(r.src)} poster={url(r.poster)} muted loop playsInline preload="metadata"
-          aria-label={`${r.caption} — reel by @${r.handle}`} />
-        <button className="reel-sound" onClick={() => onSound(!active)} aria-pressed={active} aria-label={active ? 'Mute this reel' : 'Play this reel with sound'}>
-          {active ? <Volume2 size={18} /> : <VolumeX size={18} />}<span>{active ? 'Sound on' : 'Tap for sound'}</span>
-        </button>
+          aria-label={`${r.caption} — reel by @${r.handle}`} onClick={togglePlay}
+          onPlay={() => setPlaying(true)} onPause={() => setPlaying(false)}
+          onTimeUpdate={(e) => setT(e.currentTarget.currentTime)} onLoadedMetadata={(e) => setD(e.currentTarget.duration)} />
+        <div className="reel-bar" role="group" aria-label="Video controls">
+          <button onClick={togglePlay} aria-label={playing ? 'Pause' : 'Play'}>{playing ? <Pause size={16} /> : <Play size={16} />}</button>
+          <input type="range" min={0} max={d || 1} step={0.05} value={t} aria-label="Seek"
+            style={{ ['--p' as string]: `${d ? (t / d) * 100 : 0}%` } as React.CSSProperties}
+            onChange={(e) => { v.current!.currentTime = +e.target.value; setT(+e.target.value) }} />
+          <span className="reel-time">{fmt(t)} / {fmt(d)}</span>
+          <button onClick={() => onSound(!active)} aria-pressed={active} aria-label={active ? 'Mute this reel' : 'Turn on sound'}>{active ? <Volume2 size={16} /> : <VolumeX size={16} />}</button>
+          <button onClick={full} aria-label="Full screen"><Maximize size={15} /></button>
+        </div>
       </div>
       <figcaption>
         <span className="reel-cap">{r.caption}</span>
