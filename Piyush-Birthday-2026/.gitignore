@@ -1,0 +1,14 @@
+node_modules
+dist
+review/
+tools/__pycache__
+*.log
+.env*
+# unapproved media must never enter the build
+public/memories/_unapproved/
+
+# local-only tooling: contains absolute paths from this computer and the photo-review pages
+tools/
+review/
+.claude/
+Happy Birthday Song___*

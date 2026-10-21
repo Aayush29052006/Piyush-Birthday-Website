@@ -1,0 +1,30 @@
+# Builds Piyush-Birthday-2026/ and publishes it to GitHub Pages on every push to main.
+# One-time setup on GitHub: Settings -> Pages -> Build and deployment -> Source: "GitHub Actions".
+name: Deploy to GitHub Pages
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions: { contents: read, pages: write, id-token: write }
+concurrency: { group: pages, cancel-in-progress: true }
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: { name: github-pages, url: '${{ steps.d.outputs.page_url }}' }
+    defaults:
+      run:
+        working-directory: Piyush-Birthday-2026
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: Piyush-Birthday-2026/package-lock.json
+      - run: npm ci
+      - run: npm run build
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with: { path: Piyush-Birthday-2026/dist }
+      - id: d
+        uses: actions/deploy-pages@v4
