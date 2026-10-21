@@ -13,5 +13,5 @@ export function MaskImage({ photo, label, className = '', priority = false }: { 
     return () => io.disconnect()
   }, [])
   // The observer watches the unclipped wrapper: IntersectionObserver ignores fully clip-path'd elements.
-  return <div ref={ref} className={className}><div className={`mask ${on ? 'in' : ''}`}><PhotoFrame photo={photo} label={label} natural priority={priority} thumb={priority} /></div></div>
+  return <div ref={ref} className={className}><div className={`mask ${on ? 'in' : ''}`}><PhotoFrame photo={photo} label={label} natural priority={priority} /></div></div>
 }
