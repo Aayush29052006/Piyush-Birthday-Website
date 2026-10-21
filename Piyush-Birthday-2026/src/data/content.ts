@@ -64,6 +64,16 @@ export const funny = {
   ],
 }
 
+// Birthday reels. These clips belong to their creators; each one is credited with a link to their profile.
+export const reels = {
+  heading: 'Birthday reels',
+  sub: 'A couple of messages the internet made for you, bhai.',
+  items: [
+    { src: 'reels/kitten-hello.mp4', poster: 'reels/kitten-hello.jpg', w: 720, h: 720, caption: 'Hello, birthday boy!', handle: '_loaf.kitten', url: 'https://www.instagram.com/_loaf.kitten/' },
+    { src: 'reels/bhai-birthday.mp4', poster: 'reels/bhai-birthday.jpg', w: 720, h: 406, caption: 'Bhai birthday Mubarak. Hak banta hai!', handle: 'baba_tillu__no_1', url: 'https://www.instagram.com/baba_tillu__no_1/' },
+  ],
+}
+
 export const scrapbook = { heading: 'The Scrapbook', sub: 'Pinned, taped and never thrown away.' }
 
 export const letter = {

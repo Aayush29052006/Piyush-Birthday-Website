@@ -5,6 +5,7 @@ import { funny } from '../data/content'
 import { inCategory, photos } from '../data/gallery'
 import { PhotoFrame } from '../components/PhotoFrame'
 import { PageHeader } from '../components/PageHeader'
+import { Reels } from '../components/Reels'
 import { Reveal } from '../components/Split'
 import { sfx } from '../hooks/audio'
 
@@ -44,6 +45,7 @@ export function Funny() {
             </div>
           ))}
         </div>
+        <Reels />
       </div>
     </section>
   )

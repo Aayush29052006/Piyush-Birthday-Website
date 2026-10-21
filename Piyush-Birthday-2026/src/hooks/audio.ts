@@ -98,6 +98,7 @@ export const audio = {
     el?.pause(); stopSynth(); ctx?.suspend(); set({ status: 'paused' })
   },
   toggle() { return state.status === 'playing' ? audio.pause() : audio.play() },
+  isPlaying() { return state.status === 'playing' },
   setVolume(v: number) { set({ volume: v, muted: false }); applyVol() },
   toggleMute() { set({ muted: !state.muted }); applyVol() },
   toggleSfx() { set({ sfx: !state.sfx }) },

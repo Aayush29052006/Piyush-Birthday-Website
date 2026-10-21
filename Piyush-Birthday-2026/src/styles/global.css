@@ -385,3 +385,19 @@ canvas.fx{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
   *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}
   .grain{display:none}.mask{clip-path:none}
 }
+
+/* ---------- birthday reels (funny page) ---------- */
+.reels{margin-top:clamp(4rem,8vw,6rem);text-align:center}
+.reels-sub{color:var(--mute);font:italic 300 1.15rem var(--serif);margin:-1.2rem 0 2.4rem}
+.reels-row{display:flex;justify-content:center;align-items:flex-start;gap:clamp(2rem,4vw,2.4rem) clamp(1rem,3vw,2rem);flex-wrap:wrap}
+.reel{width:min(100%,var(--rw,340px));margin:0}
+.reel:nth-child(2){--rw:520px}
+.reel-frame{position:relative;overflow:hidden;border-radius:6px;background:#000;box-shadow:0 30px 70px -18px rgba(0,0,0,.8);border:1px solid var(--line)}
+.reel-frame video{display:block;width:100%;height:100%;object-fit:contain;background:#000}
+.reel-sound{position:absolute;right:10px;top:10px;display:inline-flex;align-items:center;gap:.45rem;padding:.5rem .8rem;min-height:40px;border-radius:999px;background:rgba(8,7,10,.7);backdrop-filter:blur(8px);border:1px solid var(--line2);color:var(--gold2);font:500 .62rem var(--sans);letter-spacing:.18em;text-transform:uppercase}
+.reel-sound[aria-pressed=true]{background:var(--gold);color:#140f08;border-color:var(--gold)}
+.reel figcaption{display:flex;justify-content:space-between;align-items:baseline;gap:1rem;padding:.9rem .2rem 0;text-align:left;flex-wrap:wrap}
+.reel-cap{font:italic 300 1.15rem var(--serif);color:var(--ivory)}
+.reel-credit{display:inline-flex;align-items:center;gap:.35rem;font:500 .6rem var(--sans);letter-spacing:.2em;text-transform:uppercase;color:var(--gold);text-decoration:none;border-bottom:1px solid transparent}
+.reel-credit:hover{border-color:var(--gold)}
+.reels-note{margin-top:1.8rem;font:300 .8rem var(--sans);color:var(--mute2)}
