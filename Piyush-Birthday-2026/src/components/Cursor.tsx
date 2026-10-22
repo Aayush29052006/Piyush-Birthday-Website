@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react'
 
-// Desktop-only pointer layer: a gold cursor ring that grows over anything clickable (with a "View"/"Play" label),
+// Desktop-only pointer layer: a gold cursor ring that grows over anything clickable,
 // magnetic buttons that lean toward the pointer, and a gentle 3D tilt on photos.
 // Off on touch screens and when the visitor prefers reduced motion.
 const TILT = '.tile .pf, .pol .pf, .exhibit .pf, .portrait .mask, .chap-media .mask, .strip-i .pf, .collage .pf, .card3d'
@@ -10,7 +10,6 @@ const CLICKABLE = 'a, button, [role="button"], input[type="range"], video, .tile
 export function Cursor() {
   const ring = useRef<HTMLDivElement>(null)
   const dot = useRef<HTMLDivElement>(null)
-  const label = useRef<HTMLSpanElement>(null)
   useEffect(() => {
     const fine = matchMedia('(hover: hover) and (pointer: fine)').matches
     const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches
@@ -30,9 +29,6 @@ export function Cursor() {
       const t = e.target as Element
       const hot = t.closest?.(CLICKABLE)
       ring.current?.classList.toggle('hot', !!hot)
-      const txt = t.closest?.('.tile, .tcard') ? 'View' : t.closest?.('video') ? 'Play' : ''
-      if (label.current && label.current.textContent !== txt) label.current.textContent = txt
-      ring.current?.classList.toggle('labelled', !!txt)
       // magnetic pull
       const m = t.closest?.(MAGNET) as HTMLElement | null
       if (magnet && magnet !== m) { magnet.style.translate = ''; magnet = null }
@@ -67,7 +63,7 @@ export function Cursor() {
   }, [])
   return (
     <>
-      <div ref={ring} className="cursor-ring" aria-hidden="true"><span ref={label} /></div>
+      <div ref={ring} className="cursor-ring" aria-hidden="true" />
       <div ref={dot} className="cursor-dot" aria-hidden="true" />
     </>
   )
