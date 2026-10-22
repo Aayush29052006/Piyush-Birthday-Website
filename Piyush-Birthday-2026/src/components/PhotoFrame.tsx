@@ -17,11 +17,14 @@ export function PhotoFrame({ photo, label = 'Photo', natural = false, fill = fal
   const showImg = photo && !bad
   const file = photo ? url(thumb && photo.thumb ? photo.thumb : photo.src) : ''
   const src = file + (tries ? `?r=${tries}` : '')
+  // full-size photos offer the smaller preview to small screens (the browser picks by width)
+  const tw = photo ? Math.round(photo.w * Math.min(1, 960 / Math.max(photo.w, photo.h))) : 0
+  const srcSet = photo && !thumb && photo.thumb && !tries && tw < photo.w ? `${url(photo.thumb)} ${tw}w, ${file} ${photo.w}w` : undefined
   return (
     <div className={`pf ${fill ? 'fill' : ''} ${className}`} style={natural && photo ? { aspectRatio: `${photo.w} / ${photo.h}` } : undefined}>
       {showImg && fill && <span className="pf-bg" style={{ backgroundImage: `url("${photo.thumb ? url(photo.thumb) : file}")` }} aria-hidden="true" />}
       {showImg ? (
-        <img ref={img} src={src} alt={photo.caption || 'A memory with Piyush'} width={photo.w} height={photo.h}
+        <img ref={img} src={src} srcSet={srcSet} sizes={srcSet ? '(max-width: 900px) 92vw, 45vw' : undefined} alt={photo.caption || 'A memory with Piyush'} width={photo.w} height={photo.h}
           loading={priority ? 'eager' : 'lazy'} decoding="async" className={on ? 'on' : ''} onLoad={() => setOn(true)}
           onError={() => window.setTimeout(() => setTries((t) => t + 1), 1200 * (tries + 1))} />
       ) : (

@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
+import { AnimatePresence, motion, useReducedMotion, useScroll, useSpring } from 'motion/react'
 import { ArrowLeft, ArrowRight, X } from 'lucide-react'
 import { Opening } from './sections/Opening'
 import { Hero } from './sections/Hero'
@@ -13,6 +13,7 @@ import { Cake } from './sections/Cake'
 import { Surprise } from './sections/Surprise'
 import { Finale } from './sections/Finale'
 import { MusicPlayer } from './components/MusicPlayer'
+import { Cursor } from './components/Cursor'
 import { fireConfetti } from './components/confetti'
 import { sfx } from './hooks/audio'
 import { easterEggs, pageQuotes } from './data/content'
@@ -32,6 +33,7 @@ const PAGES = [
   { id: 'finale', title: 'The finale' },
 ]
 const pad = (n: number) => String(n).padStart(2, '0')
+const ROMAN = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X']
 const fromHash = () => Math.max(0, PAGES.findIndex((p) => '#/' + p.id === location.hash))
 
 export default function App() {
@@ -44,6 +46,8 @@ export default function App() {
   const [galleryCat, setGalleryCat] = useState('All')
   const clicks = useRef(0)
   const menuRef = useRef<HTMLDivElement>(null)
+  const { scrollYProgress } = useScroll()
+  const ringP = useSpring(scrollYProgress, { stiffness: 140, damping: 30 })
   const say = useCallback((m: string) => { setToast(m); window.setTimeout(() => setToast(''), 3500) }, [])
 
   const go = useCallback((i: number) => {
@@ -116,6 +120,10 @@ export default function App() {
           ))}
         </nav>
         <button className="chapters" onClick={() => setMenu(true)} aria-haspopup="dialog" aria-expanded={menu}>
+          <svg className="cring" viewBox="0 0 36 36" aria-hidden="true">
+            <circle cx="18" cy="18" r="16" className="cring-bg" />
+            <motion.circle cx="18" cy="18" r="16" className="cring-fg" style={{ pathLength: ringP }} />
+          </svg>
           <span className="cnum">{pad(page + 1)}<small> / {pad(PAGES.length)}</small></span>
           <span className="clabel">Chapters</span>
         </button>
@@ -141,12 +149,21 @@ export default function App() {
       </AnimatePresence>
 
       <MusicPlayer />
+      <Cursor />
       <main aria-hidden={!entered}>
         <AnimatePresence mode="wait">
           <motion.div key={id + round} className="page" initial={reduce ? false : { opacity: 0 }} animate={{ opacity: 1 }}
             exit={{ opacity: 0 }} transition={{ duration: 0.4 }}>
-            {/* gold curtain that lifts to reveal each new chapter */}
-            {!reduce && <motion.div className="curtain" aria-hidden="true" initial={{ scaleY: 1 }} animate={{ scaleY: 0 }} transition={{ duration: 0.9, ease: [0.76, 0, 0.24, 1], delay: 0.05 }} />}
+            {/* every chapter opens with a title card that wipes away; the welcome page uses a quick curtain */}
+            {!reduce && id === 'welcome' && <motion.div className="curtain" aria-hidden="true" initial={{ scaleY: 1 }} animate={{ scaleY: 0 }} transition={{ duration: 0.9, ease: [0.76, 0, 0.24, 1], delay: 0.05 }} />}
+            {!reduce && id !== 'welcome' && (
+              <motion.div className="titlecard" aria-hidden="true" initial={{ clipPath: 'inset(0% 0% 0% 0%)' }} animate={{ clipPath: 'inset(0% 0% 100% 0%)' }}
+                transition={{ duration: 0.75, ease: [0.76, 0, 0.24, 1], delay: 1.0 }}>
+                <motion.span className="tc-num" initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.45 }}>Chapter {ROMAN[page]}</motion.span>
+                <motion.span className="tc-title" initial={{ opacity: 0, y: 50, filter: 'blur(12px)' }} animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }} transition={{ duration: 0.65, ease: [0.22, 1, 0.36, 1], delay: 0.08 }}>{PAGES[page].title}</motion.span>
+                <motion.span className="tc-line" initial={{ scaleX: 0 }} animate={{ scaleX: 1 }} transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1], delay: 0.15 }} />
+              </motion.div>
+            )}
             {content}
             {pageQuotes[id] && (
               <figure className="quote">

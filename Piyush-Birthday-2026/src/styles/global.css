@@ -168,7 +168,7 @@ canvas.fx{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
 .cd .u{flex:1;padding-right:1rem;border-right:1px solid var(--line);margin-right:1rem}
 .cd .u:last-child{border:0;margin:0}
 .cd .u b{display:block;font:300 clamp(2rem,4vw,3rem)/1 var(--serif);color:var(--ivory);font-variant-numeric:lining-nums tabular-nums}
-.cd .u span{font:500 .58rem var(--sans);letter-spacing:.3em;text-transform:uppercase;color:var(--mute2)}
+.cd .u>span:not(.sr){font:500 .58rem var(--sans);letter-spacing:.3em;text-transform:uppercase;color:var(--mute2)}
 .cd .msg{font:italic 300 clamp(1.3rem,3vw,1.9rem) var(--serif);color:var(--gold2)}
 
 /* ---------- story ---------- */
@@ -428,3 +428,75 @@ canvas.fx{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
 .reel-bar{opacity:0}
 .reel-frame:hover .reel-bar,.reel-frame:focus-within .reel-bar,.reel.is-paused .reel-bar{opacity:1}
 @media (max-width:900px){.lt-photo{width:100%}}
+
+/* =============================== motion layer =============================== */
+/* custom cursor (desktop, motion allowed) */
+.cursor-ring,.cursor-dot{position:fixed;left:0;top:0;z-index:200;pointer-events:none;display:none}
+.has-cursor .cursor-ring{display:grid}.has-cursor .cursor-dot{display:block}
+.has-cursor,.has-cursor *{cursor:none!important}
+.has-cursor input[type=range]{cursor:pointer!important}
+.cursor-dot{width:6px;height:6px;margin:-3px 0 0 -3px;border-radius:50%;background:var(--gold2)}
+.cursor-ring{width:38px;height:38px;margin:-19px 0 0 -19px;border:1px solid rgba(240,217,166,.6);border-radius:50%;display:grid;place-items:center;transition:width .35s var(--ease),height .35s var(--ease),margin .35s var(--ease),background .35s,border-color .35s,opacity .3s}
+.cursor-ring.hot{width:56px;height:56px;margin:-28px 0 0 -28px;border-color:var(--gold);background:rgba(214,178,110,.08)}
+.cursor-ring.labelled{width:84px;height:84px;margin:-42px 0 0 -42px;background:rgba(214,178,110,.92);border-color:transparent;mix-blend-mode:normal}
+.cursor-ring span{font:600 .58rem var(--sans);letter-spacing:.24em;text-transform:uppercase;color:#140f08;opacity:0;transition:opacity .25s}
+.cursor-ring.labelled span{opacity:1}
+.cursor-ring.press{transform-origin:center;scale:.85}
+.cursor-ring.gone,.cursor-ring.gone+.cursor-dot{opacity:0}
+/* magnetic elements ease back */
+.btn,.chapters,.mono,.pg-next,.dock>button:first-child{transition:translate .5s var(--ease),color .5s var(--ease),border-color .5s,background .5s,transform .5s var(--ease)}
+/* 3D tilt with a soft moving highlight */
+.tile .pf,.pol .pf,.exhibit .pf,.portrait .mask,.chap-media .mask,.strip-i .pf,.collage .pf,.card3d{transform:perspective(900px) rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg));transition:transform .6s var(--ease)}
+.tilting{transition:transform .12s linear!important}
+.tile .pf::before,.pol .pf::before,.strip-i .pf::before,.collage .pf::before{content:"";position:absolute;inset:0;z-index:2;pointer-events:none;background:radial-gradient(circle at var(--gx,50%) var(--gy,50%),rgba(255,240,210,.22),transparent 55%);opacity:0;transition:opacity .4s}
+.tilting.pf::before,.tilting .pf::before{opacity:1}
+
+/* chapter title card */
+.titlecard{position:fixed;inset:0;z-index:95;pointer-events:none;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1.2rem;background:radial-gradient(ellipse at 50% 55%,#1c1611,#08070a 70%);text-align:center;padding:2rem}
+.tc-num{font:italic 300 clamp(1rem,2vw,1.3rem) var(--serif);color:var(--gold);letter-spacing:.08em}
+.tc-title{font:300 clamp(3rem,10vw,8rem)/1 var(--serif);color:var(--ivory);letter-spacing:-.02em}
+.tc-line{display:block;width:min(260px,50vw);height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent)}
+
+/* progress ring on the Chapters button */
+.chapters{position:relative}
+.cring{width:28px;height:28px;margin-right:-.3rem;transform:rotate(-90deg)}
+.cring circle{fill:none;stroke-width:2}
+.cring-bg{stroke:rgba(214,178,110,.18)}
+.cring-fg{stroke:var(--gold)}
+
+/* rolling countdown digits */
+.roll{display:flex;overflow:hidden;font:300 clamp(2rem,4vw,3rem)/1 var(--serif);color:var(--ivory);font-variant-numeric:lining-nums tabular-nums}
+.roll-col{position:relative;display:inline-block;overflow:hidden;height:1em;line-height:1}
+.roll-ch{display:inline-block}
+
+/* hero depth */
+.hero-ten{position:absolute;left:34%;top:50%;margin-top:-.55em;z-index:1;font:200 clamp(16rem,38vw,34rem)/1 var(--sans);letter-spacing:-.06em;color:transparent;-webkit-text-stroke:1.5px rgba(214,178,110,.22);pointer-events:none;user-select:none}
+
+/* marquee bands */
+.marquee{position:relative;overflow:hidden;padding:clamp(1.4rem,3vw,2.2rem) 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);background:linear-gradient(90deg,var(--ink),#0f0d0a 50%,var(--ink))}
+.marquee-track{display:flex;width:max-content;will-change:transform}
+.marquee-run{display:flex;flex:none;animation:marq 38s linear infinite}
+.marquee-track.rev .marquee-run{animation-direction:reverse}
+.marquee-item{display:inline-flex;align-items:center;gap:clamp(1.4rem,3vw,2.6rem);padding-right:clamp(1.4rem,3vw,2.6rem);font:italic 300 clamp(2.2rem,6vw,5rem)/1 var(--serif);color:var(--gold2);white-space:nowrap}
+.marquee.outline .marquee-item{color:transparent;-webkit-text-stroke:1px rgba(240,217,166,.55);font-style:normal}
+.marquee-star{font-style:normal;font-size:.4em;color:var(--gold)}
+@keyframes marq{to{transform:translateX(-100%)}}
+
+/* the bottle chronicles */
+.bottles{margin-top:clamp(4rem,8vw,6rem);text-align:center}
+.fan{position:relative;height:clamp(480px,48vw,620px);display:grid;place-items:center;margin-top:2rem}
+.fan-card{position:absolute;width:clamp(150px,16vw,220px);background:#f3ebdb;padding:8px 8px 0;color:#2a2418;box-shadow:0 28px 50px -14px rgba(0,0,0,.8);text-align:left}
+.fan-card.front{box-shadow:0 40px 80px -10px rgba(0,0,0,.9),0 0 0 2px var(--gold)}
+.fan-card .pf{border-radius:0}
+.fan-no{position:absolute;top:14px;left:14px;z-index:3;padding:.25rem .5rem;background:rgba(8,7,10,.75);color:var(--gold2);font:600 .55rem var(--sans);letter-spacing:.2em;text-transform:uppercase}
+.fan-cap{display:block;padding:.6rem .3rem .8rem;font:500 1.15rem/1.1 var(--hand);text-align:center}
+
+@media (max-width:760px){
+  .hero-ten{left:auto;right:-6%;top:12%;margin-top:0;font-size:60vw}
+  .fan{height:112vw}
+  .fan-card{width:40vw}
+  .marquee-item{font-size:2.2rem}
+}
+@media (prefers-reduced-motion:reduce){
+  .marquee-run{animation:none}
+}

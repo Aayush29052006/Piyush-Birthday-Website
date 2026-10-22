@@ -34,8 +34,8 @@ export function Gallery({ initialCat = 'All' }: { initialCat?: string }) {
             </div>
             <div className="masonry">
               {visible.map((p, i) => (
-                <motion.button key={p.id} className="tile" style={{ ['--ar' as string]: (p.w / p.h).toFixed(3) } as React.CSSProperties} initial={{ opacity: 0, y: 24 }}
-                  whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: '-5%' }} transition={{ duration: 0.7, delay: (i % 4) * 0.05, ease: [0.22, 1, 0.36, 1] }}
+                <motion.button key={p.id} className="tile" style={{ ['--ar' as string]: (p.w / p.h).toFixed(3) } as React.CSSProperties} initial={{ opacity: 0, y: 40, clipPath: 'inset(35% 0% 0% 0%)' }}
+                  whileInView={{ opacity: 1, y: 0, clipPath: 'inset(0% 0% 0% 0%)' }} viewport={{ once: true, margin: '-5%' }} transition={{ duration: 0.9, delay: (i % 5) * 0.06, ease: [0.22, 1, 0.36, 1] }}
                   onClick={() => { sfx('chime'); setOpen(i) }} aria-label={`Open photo${p.caption ? ': ' + p.caption : ''}`}>
                   <PhotoFrame photo={p} natural thumb />
                   <span className="gcap"><b>{p.caption}</b>{p.date && <small>{p.date}</small>}</span>

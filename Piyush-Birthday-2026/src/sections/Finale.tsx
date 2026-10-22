@@ -6,6 +6,8 @@ import { Letters } from '../components/Split'
 import { Particles } from '../components/Particles'
 import { PhotoFrame } from '../components/PhotoFrame'
 import { fireConfetti } from '../components/confetti'
+import { fireFireworks } from '../components/fireworks'
+import { Marquee } from '../components/Marquee'
 import { sfx } from '../hooks/audio'
 
 const ROT = [-6, 3, -2, 5, -4]
@@ -23,10 +25,12 @@ export function Finale({ onReplay, onBack }: { onReplay: () => void; onBack: () 
   useEffect(() => {
     if (!go) return
     const a = window.setTimeout(() => { sfx('chime'); fireConfetti(5000, 160) }, reduce ? 0 : 2600)
-    return () => clearTimeout(a)
+    const b = window.setTimeout(() => fireFireworks(7000), reduce ? 0 : 1600)
+    return () => { clearTimeout(a); clearTimeout(b) }
   }, [go, run, reduce])
   const slots = best.slice(0, 5) // only real, approved photos; no empty frames
   return (
+    <>
     <section ref={ref} className={`finale ${go ? 'go' : ''}`} id="finale">
       <div className="light" aria-hidden="true" />
       <Particles count={50} reactive />
@@ -53,5 +57,7 @@ export function Finale({ onReplay, onBack }: { onReplay: () => void; onBack: () 
         </motion.div>
       </div>
     </section>
+    <Marquee tone="outline" reverse items={['Happy Birthday, Piyush', 'Ten years down', 'Forever to go']} />
+    </>
   )
 }

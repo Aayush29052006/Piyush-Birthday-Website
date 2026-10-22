@@ -6,6 +6,7 @@ import { inCategory, photos } from '../data/gallery'
 import { PhotoFrame } from '../components/PhotoFrame'
 import { PageHeader } from '../components/PageHeader'
 import { Reels } from '../components/Reels'
+import { BottleCards } from '../components/BottleCards'
 import { Reveal } from '../components/Split'
 import { sfx } from '../hooks/audio'
 
@@ -45,6 +46,7 @@ export function Funny() {
             </div>
           ))}
         </div>
+        <BottleCards />
         <Reels />
       </div>
     </section>
