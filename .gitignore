@@ -8,3 +8,6 @@ reels-original/
 
 # original photo files (kept local only)
 photos-original/
+
+# photo pipeline scripts (contain local paths; kept local only)
+local-tools/
